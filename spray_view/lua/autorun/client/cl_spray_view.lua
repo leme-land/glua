@@ -7,12 +7,12 @@ net.Receive("spray_view", function()
     local hitPos = net.ReadVector()
 
     if steamID:len() < 1 or hitPos:IsZero() then
-        for i = 1, #sprays do
+        for i = #sprays, 1, -1 do
             if sprays[i].steamID == steamID then
-                sprays[i].steamID = nil -- Emtpy table
+                sprays[i].steamID = nil -- Empty table
                 sprays[i].hitPos = nil
 
-                sprays[i] = nil
+                table.remove(sprays, i)
             end
         end
 
@@ -29,6 +29,8 @@ hook.Add("PostDrawHUD", "spray_view", function()
     local hitPos = LocalPlayer():GetEyeTrace().HitPos
 
     for i = 1, #sprays do
+        if not sprays[i].hitPos then continue end -- Wtflip
+
         if hitPos:IsEqualTol(sprays[i].hitPos, 32) then
             surface.SetFont("BudgetLabel")
             surface.SetTextColor(255, 255, 255, 255)
